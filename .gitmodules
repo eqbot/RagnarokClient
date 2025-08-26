@@ -1,0 +1,6 @@
+[submodule "Glamourer.Api"]
+	path = Glamourer.Api
+	url = https://github.com/Ottermandias/Glamourer.Api
+[submodule "Penumbra.Api"]
+	path = Penumbra.Api
+	url = https://github.com/Ottermandias/Penumbra.Api
