@@ -115,6 +115,7 @@ public sealed class Plugin : IDalamudPlugin
             collection.AddSingleton<UidDisplayHandler>();
             collection.AddSingleton<PluginWatcherService>();
             collection.AddSingleton<PlayerPerformanceService>();
+            collection.AddSingleton<IpfsManager>();
 
             collection.AddSingleton<CharaDataManager>();
             collection.AddSingleton<CharaDataFileHandler>();
