@@ -471,7 +471,7 @@ public sealed class FileCacheManager : IHostedService
             if (!_ipcManager.Penumbra.APIAvailable || string.IsNullOrEmpty(_ipcManager.Penumbra.ModDirectory))
             {
                 _mareMediator.Publish(new NotificationMessage("Penumbra not connected",
-                    "Could not load local file cache data. Penumbra is not connected or not properly set up. Please enable and/or configure Penumbra properly to use Snowcloak. After, reload Snowcloak in the Plugin installer.",
+                    "Could not load local file cache data. Penumbra is not connected or not properly set up. Please enable and/or configure Penumbra properly to use Ragnarok. After, reload Ragnarok in the Plugin installer.",
                     MareConfiguration.Models.NotificationType.Error));
             }
 

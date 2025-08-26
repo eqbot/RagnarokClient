@@ -207,7 +207,7 @@ public class ChatService : DisposableMediatorSubscriberBase
             }
         }
 
-        _chatGui.PrintError($"[SnowcloakSync] Syncshell number #{shellNumber} not found");
+        _chatGui.PrintError($"[RagnarokSync] Syncshell number #{shellNumber} not found");
     }
 
     public void SendChatShell(int shellNumber, byte[] chatBytes)
@@ -236,6 +236,6 @@ public class ChatService : DisposableMediatorSubscriberBase
             }
         }
 
-        _chatGui.PrintError($"[SnowcloakSync] Syncshell number #{shellNumber} not found");
+        _chatGui.PrintError($"[RagnarokSync] Syncshell number #{shellNumber} not found");
     }
 }

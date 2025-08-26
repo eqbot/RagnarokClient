@@ -87,14 +87,14 @@ public class HubFactory : MediatorSubscriberBase
             };
         }
 
-        if (_serverConfigurationManager.CurrentApiUrl.Equals(ApiController.SnowcloakServiceUri, StringComparison.Ordinal))
+        if (_serverConfigurationManager.CurrentApiUrl.Equals(ApiController.BaseServiceUri, StringComparison.Ordinal))
         {
             var mainServerConfig = await _remoteConfig.GetConfigAsync<HubConnectionConfig>("mainServer").ConfigureAwait(false) ?? new();
             defaultConfig = mainServerConfig;
             if (string.IsNullOrEmpty(mainServerConfig.ApiUrl))
-                defaultConfig.ApiUrl = ApiController.SnowcloakServiceApiUri;
+                defaultConfig.ApiUrl = ApiController.BaseApiUri;
             if (string.IsNullOrEmpty(mainServerConfig.HubUrl))
-                defaultConfig.HubUrl = ApiController.SnowcloakServiceHubUri;
+                defaultConfig.HubUrl = ApiController.BaseServiceHubUri;
         }
 
         string jsonResponse;
