@@ -9,12 +9,6 @@ public static class Crypto
 
     private static readonly SHA256CryptoServiceProvider _sha256CryptoProvider = new();
 
-    public static string GetFileHash(this string filePath)
-    {
-        using SHA1CryptoServiceProvider cryptoProvider = new();
-        return BitConverter.ToString(cryptoProvider.ComputeHash(File.ReadAllBytes(filePath))).Replace("-", "", StringComparison.Ordinal);
-    }
-
     public static string GetHash256(this string stringToHash)
     {
         return GetOrComputeHashSHA256(stringToHash);

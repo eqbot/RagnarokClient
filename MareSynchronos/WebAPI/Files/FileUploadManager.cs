@@ -1,4 +1,5 @@
-﻿using MareSynchronos.API.Data;
+﻿using Ipfs;
+using MareSynchronos.API.Data;
 using MareSynchronos.API.Dto.Files;
 using MareSynchronos.API.Routes;
 using MareSynchronos.FileCache;
@@ -11,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-
 namespace MareSynchronos.WebAPI.Files;
 
 public sealed class FileUploadManager : DisposableMediatorSubscriberBase
@@ -20,6 +20,7 @@ public sealed class FileUploadManager : DisposableMediatorSubscriberBase
     private readonly MareConfigService _mareConfigService;
     private readonly FileTransferOrchestrator _orchestrator;
     private readonly ServerConfigurationManager _serverManager;
+    private readonly IpfsManager _ipfsManager;
     private readonly Dictionary<string, DateTime> _verifiedUploadedHashes = new(StringComparer.Ordinal);
     private CancellationTokenSource? _uploadCancellationTokenSource = new();
 
@@ -27,12 +28,13 @@ public sealed class FileUploadManager : DisposableMediatorSubscriberBase
         MareConfigService mareConfigService,
         FileTransferOrchestrator orchestrator,
         FileCacheManager fileDbManager,
-        ServerConfigurationManager serverManager) : base(logger, mediator)
+        ServerConfigurationManager serverManager, IpfsManager ipfsManager) : base(logger, mediator)
     {
         _mareConfigService = mareConfigService;
         _orchestrator = orchestrator;
         _fileDbManager = fileDbManager;
         _serverManager = serverManager;
+        _ipfsManager = ipfsManager;
 
         Mediator.Subscribe<DisconnectedMessage>(this, (msg) =>
         {
@@ -209,7 +211,8 @@ public sealed class FileUploadManager : DisposableMediatorSubscriberBase
                 Logger.LogWarning(ex, "[{hash}] Could not set upload progress", fileHash);
             }
         });
-
+        Cid fileId = await _ipfsManager.UploadFile(ms).ConfigureAwait(false);
+        /*
         var streamContent = new ProgressableStreamContent(ms, prog);
         streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
         HttpResponseMessage response;
@@ -217,7 +220,8 @@ public sealed class FileUploadManager : DisposableMediatorSubscriberBase
             response = await _orchestrator.SendRequestStreamAsync(HttpMethod.Post, MareFiles.ServerFilesUploadFullPath(_orchestrator.FilesCdnUri!, fileHash), streamContent, uploadToken).ConfigureAwait(false);
         else
             response = await _orchestrator.SendRequestStreamAsync(HttpMethod.Post, MareFiles.ServerFilesUploadMunged(_orchestrator.FilesCdnUri!, fileHash), streamContent, uploadToken).ConfigureAwait(false);
-        Logger.LogDebug("[{hash}] Upload Status: {status}", fileHash, response.StatusCode);
+        */
+        Logger.LogDebug("[{hash}] Upload returned CID: {fileId}", fileHash, fileId);
     }
 
     private async Task UploadUnverifiedFiles(HashSet<string> unverifiedUploadHashes, List<UserData> visiblePlayers, CancellationToken uploadToken)

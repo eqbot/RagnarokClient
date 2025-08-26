@@ -4,6 +4,7 @@ using MareSynchronos.Interop.Ipc;
 using MareSynchronos.MareConfiguration;
 using MareSynchronos.Services.Mediator;
 using MareSynchronos.Utils;
+using MareSynchronos.WebAPI.Files;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -28,14 +29,16 @@ public sealed class FileCacheManager : IHostedService
     private readonly SemaphoreSlim _getCachesByPathsSemaphore = new(1, 1);
     private readonly Lock _fileWriteLock = new();
     private readonly IpcManager _ipcManager;
+    private readonly IpfsManager _ipfsManager;
     private readonly ILogger<FileCacheManager> _logger;
 
-    public FileCacheManager(ILogger<FileCacheManager> logger, IpcManager ipcManager, MareConfigService configService, MareMediator mareMediator)
+    public FileCacheManager(ILogger<FileCacheManager> logger, IpcManager ipcManager, MareConfigService configService, MareMediator mareMediator, IpfsManager ipfsManager)
     {
         _logger = logger;
         _ipcManager = ipcManager;
         _configService = configService;
         _mareMediator = mareMediator;
+        _ipfsManager = ipfsManager;
         _csvPath = Path.Combine(configService.ConfigurationDirectory, "FileCache.csv");
     }
 
@@ -124,7 +127,8 @@ public sealed class FileCacheManager : IHostedService
 
             try
             {
-                var computedHash = Crypto.GetFileHash(fileCache.ResolvedFilepath);
+                //TODO: pull async up the chain on this
+                var computedHash = Task.Run(() => _ipfsManager.GetCid(fileCache.ResolvedFilepath)).Result;
                 if (!string.Equals(computedHash, fileCache.Hash, StringComparison.Ordinal))
                 {
                     _logger.LogInformation("Failed to validate {file}, got hash {hash}, expected hash {expectedHash}", fileCache.ResolvedFilepath, computedHash, fileCache.Hash);
@@ -286,7 +290,8 @@ public sealed class FileCacheManager : IHostedService
             var fi = new FileInfo(fileCache.ResolvedFilepath);
             fileCache.Size = fi.Length;
             fileCache.CompressedSize = null;
-            fileCache.Hash = Crypto.GetFileHash(fileCache.ResolvedFilepath);
+            //TODO: pull async up the chain on this
+            fileCache.Hash = Task.Run(() => _ipfsManager.GetCid(fileCache.ResolvedFilepath)).Result;
             fileCache.LastModifiedDateTicks = fi.LastWriteTimeUtc.Ticks.ToString(CultureInfo.InvariantCulture);
         }
         RemoveHashedFile(oldHash, prefixedPath);
@@ -373,7 +378,8 @@ public sealed class FileCacheManager : IHostedService
 
     private FileCacheEntity? CreateFileCacheEntity(FileInfo fileInfo, string prefixedPath, string? hash = null)
     {
-        hash ??= Crypto.GetFileHash(fileInfo.FullName);
+        //TODO: pull async up the chain on this
+        hash ??= Task.Run(() => _ipfsManager.GetCid(fileInfo.FullName)).Result;
         var entity = new FileCacheEntity(hash, prefixedPath, fileInfo.LastWriteTimeUtc.Ticks.ToString(CultureInfo.InvariantCulture), fileInfo.Length);
         entity = ReplacePathPrefixes(entity);
         AddHashedFile(entity);
