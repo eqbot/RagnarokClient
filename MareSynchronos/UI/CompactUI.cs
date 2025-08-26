@@ -104,7 +104,7 @@ public class CompactUi : WindowMediatorSubscriberBase
 
     protected override void DrawInternal()
     {
-        if (_serverManager.CurrentApiUrl.Equals(ApiController.SnowcloakServiceUri, StringComparison.Ordinal))
+        if (_serverManager.CurrentApiUrl.Equals(ApiController.BaseServiceUri, StringComparison.Ordinal))
             UiSharedService.AccentColor = new Vector4(1.0f, 0.8666f, 0.06666f, 1.0f);
         else
             UiSharedService.AccentColor = ImGuiColors.ParsedGreen;
