@@ -1,5 +1,4 @@
-# Snowcloak Sync
+# Ragnarok Sync
 
-Come in from the cold, and be your true self.
+haha get it it's funny because the ragnarok is an interplanetary vessel and im trying to use IPFS to store the mod files
 
-A Dalamud plugin. 
