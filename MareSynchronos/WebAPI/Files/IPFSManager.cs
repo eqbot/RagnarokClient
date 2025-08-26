@@ -49,5 +49,11 @@ namespace MareSynchronos.WebAPI.Files
             return node.Id;
         }
 
+        public async Task<long> GetSize(string cid)
+        {
+            var node = await _ipfsClient.FileSystem.ListAsync(cid).ConfigureAwait(false);
+            //TODO: don't downcast this ulong to long for precision
+            return (long)node.Size;
+        }
     }
 }
