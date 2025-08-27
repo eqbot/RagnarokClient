@@ -508,7 +508,7 @@ public sealed class FileCacheManager : IHostedService
                 try
                 {
                     var hash = splittedEntry[0];
-                    if (hash.Length != 40) throw new InvalidOperationException("Expected Hash length of 40, received " + hash.Length);
+                    if (hash.Length != 46) throw new InvalidOperationException("Expected Hash length of 40, received " + hash.Length);
                     var path = splittedEntry[1];
                     var time = splittedEntry[2];
 
