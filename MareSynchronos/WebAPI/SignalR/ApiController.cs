@@ -22,10 +22,10 @@ namespace MareSynchronos.WebAPI;
 public sealed partial class ApiController : DisposableMediatorSubscriberBase, IMareHubClient
 {
     public const string ServerTitle = "Ragnarok Main Server";
-    //TODO: find a place for server to live so i can test this
-    public const string BaseServiceUri = "";
-    public const string BaseApiUri = "";
-    public const string BaseServiceHubUri = "";
+    //TODO: these are set to localhost for dev for now, get a real host one day???
+    public const string BaseServiceUri = "http://localhost:6000";
+    public const string BaseApiUri = "http://localhost:6000/";
+    public const string BaseServiceHubUri = "http://localhost:6000/mare";
 
     private readonly DalamudUtilService _dalamudUtil;
     private readonly HubFactory _hubFactory;
