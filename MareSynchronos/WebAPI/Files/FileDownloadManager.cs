@@ -166,14 +166,13 @@ public partial class FileDownloadManager : DisposableMediatorSubscriberBase
             var filePath = _fileDbManager.GetCacheFilePath(fileReplacement.Hash, fileExtension);
             try
             {
-                using var decoder = LZ4Frame.Decode(fileStream);
                 using var tmpFileStream = new FileStream(tmpPath, new FileStreamOptions()
                 {
                     Mode = FileMode.CreateNew,
                     Access = FileAccess.Write,
                     Share = FileShare.None
                 });
-                await decoder.AsStream().CopyToAsync(tmpFileStream, CancellationToken.None).ConfigureAwait(false);
+                await fileStream.CopyToAsync(tmpFileStream, CancellationToken.None).ConfigureAwait(false);
                 tmpFileStream.Close();
                 _fileCompactor.RenameAndCompact(filePath, tmpPath);
                 PersistFileToStorage(fileReplacement.Hash, filePath, fileStream.Length);

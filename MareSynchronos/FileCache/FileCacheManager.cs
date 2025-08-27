@@ -175,10 +175,8 @@ public sealed class FileCacheManager : IHostedService
         var fileCache = GetFileCacheByHash(fileHash)!;
         using var fs = File.OpenRead(fileCache.ResolvedFilepath);
         var ms = new MemoryStream(64 * 1024);
-        using var encstream = LZ4Stream.Encode(ms, new LZ4EncoderSettings(){CompressionLevel=K4os.Compression.LZ4.LZ4Level.L09_HC});
-        await fs.CopyToAsync(encstream, uploadToken).ConfigureAwait(false);
-        encstream.Close();
-        fileCache.CompressedSize = encstream.Length;
+        await fs.CopyToAsync(ms, uploadToken).ConfigureAwait(false);
+        fileCache.CompressedSize = ms.Length;
         return (fileHash, ms.ToArray());
     }
 
