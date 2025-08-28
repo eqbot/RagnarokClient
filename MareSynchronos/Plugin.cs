@@ -168,8 +168,6 @@ public sealed class Plugin : IDalamudPlugin
             collection.AddSingleton<IConfigService<IMareConfiguration>>(s => s.GetRequiredService<RemoteConfigCacheService>());
             collection.AddSingleton<ConfigurationMigrator>();
             collection.AddSingleton<ConfigurationSaveService>();
-            collection.AddSingleton<RemoteConfigurationService>();
-
             collection.AddSingleton<HubFactory>();
 
             // add scoped services

@@ -19,7 +19,6 @@ public class HubFactory : MediatorSubscriberBase
 {
     private readonly ILoggerProvider _loggingProvider;
     private readonly ServerConfigurationManager _serverConfigurationManager;
-    private readonly RemoteConfigurationService _remoteConfig;
     private readonly TokenProvider _tokenProvider;
     private HubConnection? _instance;
     private string _cachedConfigFor = string.Empty;
@@ -27,11 +26,10 @@ public class HubFactory : MediatorSubscriberBase
     private bool _isDisposed = false;
 
     public HubFactory(ILogger<HubFactory> logger, MareMediator mediator,
-        ServerConfigurationManager serverConfigurationManager, RemoteConfigurationService remoteConfig,
+        ServerConfigurationManager serverConfigurationManager,
         TokenProvider tokenProvider, ILoggerProvider pluginLog) : base(logger, mediator)
     {
         _serverConfigurationManager = serverConfigurationManager;
-        _remoteConfig = remoteConfig;
         _tokenProvider = tokenProvider;
         _loggingProvider = pluginLog;
     }
@@ -85,16 +83,6 @@ public class HubFactory : MediatorSubscriberBase
                 HubUrl = _serverConfigurationManager.CurrentApiUrl.TrimEnd('/') + IMareHub.Path,
                 Transports = []
             };
-        }
-
-        if (_serverConfigurationManager.CurrentApiUrl.Equals(ApiController.BaseServiceUri, StringComparison.Ordinal))
-        {
-            var mainServerConfig = await _remoteConfig.GetConfigAsync<HubConnectionConfig>("mainServer").ConfigureAwait(false) ?? new();
-            defaultConfig = mainServerConfig;
-            if (string.IsNullOrEmpty(mainServerConfig.ApiUrl))
-                defaultConfig.ApiUrl = ApiController.BaseApiUri;
-            if (string.IsNullOrEmpty(mainServerConfig.HubUrl))
-                defaultConfig.HubUrl = ApiController.BaseServiceHubUri;
         }
 
         string jsonResponse;
